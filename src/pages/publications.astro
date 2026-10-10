@@ -5,11 +5,12 @@ import { site } from '../data/site';
 
 const years = [...new Set(publications.map((p) => p.year))].sort((a, b) => b - a);
 const firstCount = publications.filter((p) => p.first).length;
+const span = `${Math.min(...years)}–${Math.max(...years)}`;
 ---
 
-<BaseLayout title="Publications" description="Peer-reviewed publications by Frank Ceballos on ultrafast spectroscopy of two-dimensional materials, 2014–2018.">
+<BaseLayout title="Publications" description={`Peer-reviewed publications by Frank Ceballos on ultrafast spectroscopy of two-dimensional materials, ${span}.`}>
   <section class="mx-auto max-w-[88rem] px-5 pb-28 pt-14 sm:px-8 lg:px-12 lg:pt-20">
-    <p class="eyebrow text-graphite">Publications · {publications.length} papers · 2014–2018</p>
+    <p class="eyebrow text-graphite">Publications · {publications.length} papers · {span}</p>
     <h1 class="display-soft mt-6 text-display-xl font-medium !text-[clamp(3.5rem,13vw,12rem)]">Papers.</h1>
 
     <div class="mt-12 grid gap-10 lg:grid-cols-12">
@@ -23,7 +24,7 @@ const firstCount = publications.filter((p) => p.first).length;
           <button type="button" class="filter-btn rounded-full border border-ink px-4 py-1.5 text-sm" data-filter="first" aria-pressed="false">First author</button>
         </div>
         <p class="mt-6 text-sm text-graphite">
-          Source: <a class="link-u" href={site.links.kuProfile} target="_blank" rel="noopener noreferrer">KU Ultrafast Laser Lab profile</a>.
+          Source: <a class="link-u" href={site.links.kuProfile} target="_blank" rel="noopener noreferrer">KU Ultrafast Laser Lab profile</a>, with DOIs from Crossref.
           {site.links.scholar && (<> Citation counts: <a class="link-u" href={site.links.scholar} target="_blank" rel="noopener noreferrer">Google Scholar</a>.</>)}
         </p>
       </div>
@@ -39,9 +40,9 @@ const firstCount = publications.filter((p) => p.first).length;
                 .filter((p) => p.year === y)
                 .map((p) => (
                   <li id={p.id} data-first={p.first} class="pub reveal scroll-mt-24 border-t border-ink/15 py-6 first:border-t-0 first:pt-0">
-                    <p class="eyebrow text-graphite">{p.first ? 'First author' : 'Co-author'} · {p.venue} {p.detail}</p>
+                    <p class="eyebrow text-graphite">{p.first ? 'First author' : 'Co-author'} · {p.venue}{p.detail ? ` ${p.detail}` : ''}</p>
                     <h3 class="mt-2 text-display-sm">
-                      <a href={scholarSearch(p.title)} target="_blank" rel="noopener noreferrer" class="link-u">{p.title}</a>
+                      <a href={p.doi ? `https://doi.org/${p.doi}` : scholarSearch(p.title)} target="_blank" rel="noopener noreferrer" class="link-u">{p.title}</a>
                     </h3>
                     <p class="mt-3 max-w-3xl text-sm leading-relaxed text-graphite">
                       {p.authors.map((a, i) => (
@@ -63,6 +64,12 @@ const firstCount = publications.filter((p) => p.first).length;
       <h2 class="display-soft text-display-md lg:col-span-5">Beyond the lab group</h2>
       <ul class="space-y-6 lg:col-span-6 lg:col-start-7">
         <li>
+          <p class="eyebrow text-graphite">Ph.D. dissertation · 2017</p>
+          <p class="mt-2 font-display text-xl">Interlayer Charge Transfer in van der Waals Heterostructures Formed by Transition Metal Dichalcogenide Monolayers</p>
+          <p class="mt-1 text-sm text-graphite">F. Ceballos · University of Kansas</p>
+          <a href="https://hdl.handle.net/1808/26937" target="_blank" rel="noopener noreferrer" class="link-u mt-2 inline-block py-1 text-sm">Read it on KU ScholarWorks ↗<span class="sr-only"> (opens in a new tab)</span></a>
+        </li>
+        <li>
           <p class="eyebrow text-graphite">Journal supplement abstract · 2019</p>
           <p class="mt-2 font-display text-xl">A Machine Learning Based Approach for Fast and Automated Plan Quality Evaluation for Online Adaptive Radiation Therapy</p>
           <p class="mt-1 text-sm text-graphite">F. Ceballos, S. N. Lim, Z. Wang, J. Zhang, H. Nasief, E. E. Ahunbay, A. Li · Int. J. Radiation Oncology Biol. Phys. 105(1), S251–S252</p>
@@ -79,6 +86,24 @@ const firstCount = publications.filter((p) => p.first).length;
           <p class="mt-2 font-display text-xl">Update: Gravitational Wave Galaxy Catalogue for the Rapid Search of Electromagnetic Counterparts from Gravitational Waves</p>
           <p class="mt-1 text-sm text-graphite">F. Ceballos · IEEE Earthzine, URC Virtual Poster Session</p>
           <a href="/archive#earthzine" class="link-u mt-2 inline-block py-1 text-sm">Preserved copy →</a>
+        </li>
+        <li>
+          <p class="eyebrow text-graphite">Article · 2013</p>
+          <p class="mt-2 font-display text-xl">Contribution from f Orbitals to the Density of States of NdBa2Cu3O7 and SmBa2Cu3O7 Superconductors</p>
+          <p class="mt-1 text-sm text-graphite">F. Ceballos, J. Sanchez, H. Tototzintle Huitle · Superficies y Vacío</p>
+          <a href="https://smctsm.org.mx/ojs/index.php/SyV/article/download/159/90" target="_blank" rel="noopener noreferrer" class="link-u mt-2 inline-block py-1 text-sm">Read the article ↗<span class="sr-only"> (opens in a new tab)</span></a>
+        </li>
+        <li>
+          <p class="eyebrow text-graphite">Meeting abstract · 2011</p>
+          <p class="mt-2 font-display text-xl">Calculating the Phonon Dispersion From First Principles</p>
+          <p class="mt-1 text-sm text-graphite">F. Ceballos, A. O’Hara, A. Slepko, A. A. Demkov · Bulletin of the American Physical Society (Texas Section)</p>
+          <a href="http://absimage.aps.org/image/TSF11/MWS_TSF11-2011-000095.pdf" target="_blank" rel="noopener noreferrer" class="link-u mt-2 inline-block py-1 text-sm">Read the abstract ↗<span class="sr-only"> (opens in a new tab)</span></a>
+        </li>
+        <li>
+          <p class="eyebrow text-graphite">Meeting abstract · 2010</p>
+          <p class="mt-2 font-display text-xl">Preliminary Results for the Distribution of Observable Pulsars Within the Galaxy</p>
+          <p class="mt-1 text-sm text-graphite">F. Ceballos, M. Benacquista · Bulletin of the American Physical Society (Texas Section)</p>
+          <a href="https://absimage.aps.org/image/TSF10/MWS_TSF10-2010-000104.pdf" target="_blank" rel="noopener noreferrer" class="link-u mt-2 inline-block py-1 text-sm">Read the abstract ↗<span class="sr-only"> (opens in a new tab)</span></a>
         </li>
       </ul>
     </aside>

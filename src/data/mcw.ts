@@ -12,13 +12,13 @@ const doi = { label: 'Publisher record (DOI)', href: 'https://doi.org/10.1016/j.
 export const mcwIntro = {
   institution: 'Medical College of Wisconsin',
   department: 'Radiation Oncology',
-  period: 'July 2018 onward',
+  period: 'July 2018 to July 2020',
   compiled: 'October 9, 2026',
   areas: 'Medical physics · machine learning · online adaptive radiotherapy · plan quality · auto-segmentation QA',
   lede: 'How do you judge, and adapt, a patient’s radiation treatment plan in the few minutes available while they are on the table?',
   paragraphs: [
-    'I joined the Department of Radiation Oncology as a postdoctoral researcher in July 2018, after a Ph.D. spent timing electrons and a year teaching AP Physics. The problem was clinical. In online adaptive radiotherapy the patient’s anatomy has changed since the plan was made, so a new plan has to be produced or chosen on the spot, and comparing candidates by hand is slow and subjective.',
-    'I came at it from two sides: models that score and rank treatment plans from their three-dimensional dose distributions, and checks on the automatically drawn contours those plans depend on. Alongside the research, I completed two years of medical physics training.',
+    'I joined the Department of Radiation Oncology as a postdoctoral fellow in July 2018, after a Ph.D. spent timing electrons and a year teaching AP Physics. The problem was clinical. In online adaptive radiotherapy the patient’s anatomy has changed since the plan was made, so a new plan has to be produced or chosen on the spot, and comparing candidates by hand is slow and subjective.',
+    'I came at it from two sides: models that score and rank treatment plans from their three-dimensional dose distributions, and checks on the automatically drawn contours those plans depend on. Alongside the research, I completed two years of CAMPEP-accredited medical physics training at the college.',
   ],
 };
 

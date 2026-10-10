@@ -34,7 +34,7 @@ export const journey: JourneyEntry[] = [
     title: 'Timing electrons in atomic layers',
     body: 'A Ph.D. in Hui Zhao’s group, watching electrons and holes cross between atomically thin semiconductors on timescales of trillionths of a second.',
     points: [
-      'Sixteen papers, 2014–2018, six of them as first author',
+      'Eighteen papers, 2013–2018, six of them as first author',
       'Published in ACS Nano, Nano Letters and Physical Review Materials, plus a feature article on the field',
     ],
     links: [{ label: 'All the papers', href: '/publications' }],
@@ -50,8 +50,7 @@ export const journey: JourneyEntry[] = [
     year: '2018–20',
     org: 'Medical College of Wisconsin · Radiation Oncology',
     title: 'Teaching a model to judge radiation plans',
-    // TODO: add the official name of the medical physics program, and whether it is CAMPEP-accredited.
-    body: 'Postdoctoral research on online adaptive radiotherapy, where a clinician has minutes to choose a plan. My models scored and ranked plans in seconds and checked automatically drawn contours. Alongside the research, I completed two years of medical physics training.',
+    body: 'A postdoctoral fellowship in Radiation Oncology, from July 2018 to July 2020, on online adaptive radiotherapy, where a clinician has minutes to choose a plan. My models scored and ranked plans in seconds and checked automatically drawn contours. Alongside the research, I completed two years of CAMPEP-accredited medical physics training at the same college.',
     points: [
       'Plan-quality models reached an average test AUC of up to 0.95 on 200 prostate plans',
       'Work presented at AAPM 2019, AAPM 2020 and ASTRO 2020',
