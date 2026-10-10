@@ -1,0 +1,92 @@
+---
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { site } from '../data/site';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogType?: 'website' | 'article';
+  published?: Date;
+}
+
+const { title, description = site.description, ogType = 'website', published } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name}: ${site.tagline}`;
+// Absolute URLs are only valid once `site` is set (see astro.config.mjs).
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
+// Add a 1200x630 image at public/og.png and it is picked up automatically.
+const hasOgImage = existsSync(join(process.cwd(), 'public', 'og.png'));
+const ogImage = Astro.site && hasOgImage ? new URL('/og.png', Astro.site) : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#F2EDE3" />
+    <meta name="color-scheme" content="light" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+    >
+      Skip to content
+    </a>
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+
+    <script>
+      // Reveal on scroll
+      const items = document.querySelectorAll<HTMLElement>('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        items.forEach((el) => io.observe(el));
+      } else {
+        items.forEach((el) => el.classList.add('is-in'));
+      }
+    </script>
+  </body>
+</html>

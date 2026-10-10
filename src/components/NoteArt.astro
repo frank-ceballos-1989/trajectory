@@ -1,0 +1,17 @@
+---
+import { noteArt } from '../lib/noteArt';
+
+// Renders the article, then puts each person's figure right after their `##` heading, so every
+// thank-you note opens with its own picture. Figures are drawn in src/lib/noteArt.ts.
+const html = await Astro.slots.render('default');
+
+let n = 0;
+const withArt = html.replace(/<h2 id="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g, (heading, id: string, inner: string) => {
+  n++;
+  const name = inner.replace(/<[^>]+>/g, '').trim();
+  const svg = noteArt(id, `Note ${String(n).padStart(2, '0')} · ${name}`);
+  return svg ? heading + svg : heading;
+});
+---
+
+<Fragment set:html={withArt} />

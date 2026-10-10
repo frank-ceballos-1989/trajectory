@@ -1,0 +1,17 @@
+---
+interface Props {
+  n: string;
+  label: string;
+  invert?: boolean;
+  onAccent?: boolean;
+}
+const { n, label, invert = false, onAccent = false } = Astro.props;
+const tone = onAccent ? 'text-ink' : invert ? 'text-paper/75' : 'text-graphite';
+const rule = onAccent ? 'bg-ink/60' : invert ? 'bg-paper/40' : 'bg-ink/40';
+---
+
+<div class:list={['reveal flex items-center gap-4', tone]}>
+  <span class="eyebrow">{n}</span>
+  <span aria-hidden="true" class:list={['h-px w-12', rule]}></span>
+  <span class="eyebrow">{label}</span>
+</div>

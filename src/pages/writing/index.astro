@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts, formatDate, readingMinutes } from '../../lib/writing';
+
+const posts = await getPosts();
+---
+
+<BaseLayout title="Writing" description="Articles and notes by Frank Ceballos: some about the work, some about the people behind it.">
+  <section class="mx-auto max-w-[88rem] px-5 pb-28 pt-14 sm:px-8 lg:px-12 lg:pt-20">
+    <p class="eyebrow text-graphite">Writing · {posts.length} {posts.length === 1 ? 'piece' : 'pieces'}</p>
+    <h1 class="display-soft mt-6 text-display-xl font-medium !text-[clamp(3.5rem,13vw,12rem)]">Written down.</h1>
+    <p class="mt-10 max-w-2xl text-xl leading-relaxed">
+      Articles, in no fixed order. Some about the work, some about the people behind it.
+    </p>
+
+    <ol class="mt-20 border-t border-ink">
+      {
+        posts.map((post) => (
+          <li class="border-b border-ink/25">
+            <a href={`/writing/${post.id}/`} class="group grid gap-3 py-10 lg:grid-cols-12 lg:gap-8">
+              <p class="eyebrow text-graphite lg:col-span-2 lg:pt-3">{formatDate(post.data.date)}</p>
+              <div class="lg:col-span-7">
+                {post.data.draft && <p class="eyebrow mb-2 text-ember-deep">Draft · visible in dev only</p>}
+                <h2 class="display-soft text-display-md transition-transform duration-500 ease-out group-hover:translate-x-2">
+                  {post.data.title}
+                </h2>
+                <p class="mt-4 max-w-xl leading-relaxed text-ink/80">{post.data.description}</p>
+              </div>
+              <p class="eyebrow text-graphite lg:col-span-3 lg:pt-3 lg:text-right">
+                {post.data.tags.length > 0 && <>{post.data.tags.join(' · ')} · </>}{readingMinutes(post.body)} min read
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</BaseLayout>

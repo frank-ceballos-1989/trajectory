@@ -1,0 +1,18 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-ink/20 bg-paper">
+  <div class="mx-auto flex max-w-[88rem] flex-col gap-4 px-5 py-8 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+    <p class="eyebrow text-graphite">© {year} {site.name}</p>
+    <nav aria-label="Footer" class="eyebrow flex gap-6 text-graphite">
+      <a href="/writing/" class="link-u py-1">Writing</a>
+      <a href="/mcw" class="link-u py-1">MCW research</a>
+      <a href="/publications" class="link-u py-1">Publications</a>
+      <a href="/archive" class="link-u py-1">Archive</a>
+    </nav>
+    <p class="eyebrow text-graphite">Set in Fraunces and Instrument Sans</p>
+    <a href="#main" class="eyebrow link-u self-start md:self-auto">Back to top ↑</a>
+  </div>
+</footer>

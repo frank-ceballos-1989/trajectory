@@ -1,0 +1,46 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import { about } from '../data/site';
+---
+
+<section id="about" aria-labelledby="about-title" class="relative border-t border-ink/20 py-24 sm:py-32">
+  <div class="mx-auto max-w-[88rem] px-5 sm:px-8 lg:px-12">
+    <SectionLabel n="01" label="About" />
+
+    <div class="mt-10 grid gap-12 lg:grid-cols-12 lg:gap-8">
+      <h2 id="about-title" class="reveal display-soft text-display-lg lg:sticky lg:top-28 lg:col-span-6 lg:self-start">
+        {about.heading}
+      </h2>
+
+      <div class="lg:col-span-5 lg:col-start-8">
+        <div class="space-y-7 text-lg leading-[1.7] text-ink/90 sm:text-xl">
+          {
+            about.paragraphs.map((p, i) => (
+              <p
+                class:list={[
+                  'reveal',
+                  i === 0 &&
+                    'first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:font-display first-letter:text-[5.2rem] first-letter:leading-[0.8] first-letter:text-ember-deep',
+                ]}
+                style={`--d:${i * 90}ms`}
+              >
+                {p}
+              </p>
+            ))
+          }
+        </div>
+
+        <dl class="reveal mt-14 divide-y divide-ink/20 border-y border-ink/20">
+          {
+            about.credentials.map((f) => (
+              <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5 text-sm sm:grid-cols-[7rem_1fr]">
+                <dt class="eyebrow pt-0.5 text-graphite">{f.k}</dt>
+                <dd>{f.v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>

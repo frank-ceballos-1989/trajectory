@@ -1,0 +1,141 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import WorkArt from './WorkArt.astro';
+
+type Variant = 'heterostructure' | 'trilayer' | 'decay' | 'sky' | 'inspiral' | 'plans';
+
+interface Plate {
+  n: string;
+  variant: Variant;
+  bg: string;
+  aspect: string;
+  span: string;
+  title: string;
+  meta: string;
+  note: string;
+  href: string;
+  cta: string;
+}
+
+const plates: Plate[] = [
+  {
+    n: '01',
+    variant: 'heterostructure',
+    bg: 'bg-sand',
+    aspect: 'aspect-[5/4]',
+    span: 'lg:col-span-7',
+    title: 'Where electrons and holes part ways',
+    meta: 'ACS Nano · 2014 · first author',
+    note: 'Pump–probe measurements of how charge separates, and indirect excitons form, between two atomic layers: MoS₂ and MoSe₂.',
+    href: '/publications#acsnano-2014-separation',
+    cta: 'See the paper',
+  },
+  {
+    n: '02',
+    variant: 'trilayer',
+    bg: 'bg-paper border border-ink/25',
+    aspect: 'aspect-[4/5]',
+    span: 'lg:col-span-5 lg:mt-40',
+    title: 'Three layers, unexpected transfer',
+    meta: 'Nano Letters · 2017 · first author',
+    note: 'Adding a third layer, and finding charge transfer that behaved anomalously.',
+    href: '/publications#nl-2017-trilayer',
+    cta: 'See the paper',
+  },
+  {
+    n: '03',
+    variant: 'decay',
+    bg: 'bg-sand',
+    aspect: 'aspect-square',
+    span: 'lg:col-span-5 lg:col-start-2',
+    title: 'Reading a material by how fast it forgets',
+    meta: 'Advanced Functional Materials · 2017 · feature article',
+    note: 'A review of what ultrafast laser spectroscopy has revealed about two-dimensional materials beyond graphene.',
+    href: '/publications#afm-2017-review',
+    cta: 'See the article',
+  },
+  {
+    n: '04',
+    variant: 'sky',
+    bg: 'bg-ink text-paper',
+    aspect: 'aspect-[5/4]',
+    span: 'lg:col-span-6 lg:col-start-7 lg:mt-24',
+    title: 'A shortlist of galaxies for a blurry sky',
+    meta: 'NASA internship · Earthzine · 2012',
+    note: 'LIGO can narrow a source down to only about 100 square degrees. I extended the Gravitational Wave Galaxy Catalogue to the distances next-generation detectors can reach (300 and 650 Mpc), so telescopes know where to look.',
+    href: '/archive#earthzine',
+    cta: 'Read the preserved article',
+  },
+  {
+    n: '05',
+    variant: 'inspiral',
+    bg: 'bg-sand',
+    aspect: 'aspect-[4/3]',
+    span: 'lg:col-span-6 lg:col-start-4 lg:mt-8',
+    title: 'Listening for white dwarfs that spiral together',
+    meta: 'IAU Symposium 281 · arXiv · 2011 · co-author',
+    note: 'Which Galactic white-dwarf binaries could LISA resolve, and which might be the progenitors of Type Ia supernovae?',
+    href: '/archive#arxiv',
+    cta: 'Read the abstract',
+  },
+  {
+    n: '06',
+    variant: 'plans',
+    bg: 'bg-sand',
+    aspect: 'aspect-[4/3]',
+    span: 'lg:col-span-7 lg:mt-6',
+    title: 'Which radiation plan is better? Ask the model',
+    meta: 'MCW Radiation Oncology · 2019 · first author',
+    note: 'In online adaptive radiotherapy a clinician has minutes to choose a plan. A random-forest model scored and compared plans in about ten seconds, and picked the clinician\u2019s preferred plan 90% of the time when scores differed by more than 20 points.',
+    href: '/mcw#plan-ranking-2019',
+    cta: 'Read the MCW research',
+  },
+];
+---
+
+<section id="work" aria-labelledby="work-title" class="border-t border-ink/20 py-24 sm:py-32">
+  <div class="mx-auto max-w-[88rem] px-5 sm:px-8 lg:px-12">
+    <SectionLabel n="03" label="Selected work" />
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-12">
+      <h2 id="work-title" class="reveal display-soft text-display-lg lg:col-span-8">
+        Six results <em class="font-normal">I would still</em> stand behind.
+      </h2>
+      <p class="reveal text-lg leading-relaxed text-graphite lg:col-span-3 lg:col-start-10 lg:self-end">
+        Each plate is redrawn as a diagram rather than lifted from the paper. Hover to nudge the physics.
+      </p>
+    </div>
+
+    <div class="mt-20 grid gap-x-8 gap-y-20 lg:grid-cols-12 lg:gap-y-16">
+      {
+        plates.map((p) => (
+          <article class:list={['group reveal', p.span]}>
+            <a href={p.href} class="block" tabindex="-1" aria-hidden="true">
+              <div class:list={['relative overflow-hidden', p.bg, p.aspect]}>
+                <WorkArt variant={p.variant} />
+                <span class:list={['eyebrow absolute left-4 top-4', p.variant === 'sky' ? 'text-paper/80' : 'text-graphite']}>
+                  Plate {p.n}
+                </span>
+                <span
+                  aria-hidden="true"
+                  class:list={[
+                    'absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full border transition-all duration-500 ease-out group-hover:bg-ember group-hover:text-ink group-hover:border-ember',
+                    p.variant === 'sky' ? 'border-paper/60' : 'border-ink/50',
+                  ]}
+                >
+                  ↗
+                </span>
+              </div>
+            </a>
+            <div class="mt-6 max-w-xl">
+              <p class="eyebrow text-graphite">{p.meta}</p>
+              <h3 class="mt-3 text-display-sm">{p.title}</h3>
+              <p class="mt-4 leading-relaxed text-ink/80">{p.note}</p>
+              <a href={p.href} class="link-u mt-5 inline-block py-1 text-sm">{p.cta} →</a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

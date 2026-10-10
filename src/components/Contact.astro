@@ -1,0 +1,66 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import { site } from '../data/site';
+
+const labels: Record<string, string> = {
+  medium: 'Medium',
+  researchgate: 'ResearchGate',
+  kuProfile: 'KU Ultrafast Lab',
+  arxiv: 'arXiv',
+  scholar: 'Google Scholar',
+  linkedin: 'LinkedIn',
+  github: 'GitHub',
+};
+const links = Object.entries(site.links)
+  .filter(([, url]) => Boolean(url))
+  .map(([key, url]) => ({ key, url: url as string, label: labels[key] ?? key }));
+const hasEmail = Boolean(site.email);
+---
+
+<section id="contact" aria-labelledby="contact-title" class="bg-ember py-24 text-ink sm:py-32">
+  <div class="mx-auto max-w-[88rem] px-5 sm:px-8 lg:px-12">
+    <SectionLabel n="04" label="Contact" onAccent />
+
+    <h2 id="contact-title" class="reveal display-soft mt-10 text-display-lg">
+      Ask me <em class="font-normal">something.</em>
+    </h2>
+
+    <div class="mt-16 grid gap-14 lg:grid-cols-12">
+      <div class="reveal lg:col-span-7">
+        {
+          hasEmail && (
+            <a
+              href={`mailto:${site.email}`}
+              class="group inline-flex flex-wrap items-baseline gap-x-4 break-all font-display text-[clamp(1.6rem,4.4vw,3.75rem)] leading-tight underline decoration-ink/40 decoration-1 underline-offset-[0.2em] transition-[text-decoration-color] duration-300 hover:decoration-ink"
+            >
+              {site.email}
+              <span aria-hidden="true" class="inline-block transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:translate-x-1">↗</span>
+            </a>
+          )
+        }
+        <p class:list={['max-w-md leading-relaxed', hasEmail && 'mt-6']}>
+          Ultrafast spectroscopy, gravitational waves, machine learning in radiotherapy, freight data: bring me a question, a dataset or an idea.
+        </p>
+      </div>
+
+      <ul class="reveal grid grid-cols-2 gap-x-6 border-t border-ink/50 lg:col-span-4 lg:col-start-9">
+        {
+          links.map((l) => (
+            <li class="border-b border-ink/50">
+              <a
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-center justify-between py-4 text-sm font-medium"
+              >
+                {l.label}
+                <span aria-hidden="true" class="transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:translate-x-1">↗</span>
+                <span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+# Netlify build settings for this site. See PERSONA.md, "Deploy to Netlify".
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Astro 7 needs Node 22 or newer. `.nvmrc` pins the same version for local work.
+  NODE_VERSION = "22"
+
+# Security headers on every response.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Fingerprinted build assets (fonts, CSS) never change, so cache them for a year.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Netlify serves dist/404.html automatically for unknown paths. No redirects are needed for this static site.

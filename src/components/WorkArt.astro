@@ -1,0 +1,185 @@
+---
+import { hexGrid, seeded } from '../lib/hex';
+
+interface Props {
+  variant: 'heterostructure' | 'trilayer' | 'decay' | 'sky' | 'inspiral' | 'plans';
+}
+const { variant } = Astro.props;
+
+// plans: two dose distributions drawn as nested isodose contours (plan B is tighter)
+const isodose = (cx: number, cy: number, R: number) => {
+  const pts: string[] = [];
+  for (let i = 0; i < 72; i++) {
+    const t = (i / 72) * Math.PI * 2;
+    const k = 1 + 0.11 * Math.cos(2 * t + 0.6) + 0.07 * Math.cos(3 * t + 1.9) + 0.04 * Math.cos(5 * t + 0.3);
+    pts.push(`${(cx + R * 1.12 * k * Math.cos(t)).toFixed(1)},${(cy + R * 0.92 * k * Math.sin(t)).toFixed(1)}`);
+  }
+  return pts.join(' ');
+};
+const levels = [1, 0.8, 0.6, 0.42, 0.26];
+
+// heterostructure: two offset honeycomb lattices
+const latticeA = hexGrid(13, 11, 34, 6, 20);
+const latticeB = hexGrid(13, 11, 34, 6 + 17, 20 + 10);
+
+// trilayer: three stacked rhombi
+const rhombus = (cx: number, cy: number) => `${cx - 190},${cy} ${cx},${cy - 68} ${cx + 190},${cy} ${cx},${cy + 68}`;
+
+// decay: pump-probe style curves
+const decay = (A: number, tau: number) => {
+  const pts: string[] = ['70,360', '108,360'];
+  for (let x = 112; x <= 560; x += 8) pts.push(`${x},${(360 - A * Math.exp(-(x - 112) / tau)).toFixed(1)}`);
+  return 'M ' + pts.join(' L ');
+};
+
+// sky: seeded field of "galaxies" + localisation ellipse
+const rnd = seeded(20121024);
+const field = Array.from({ length: 150 }, () => ({ x: 30 + rnd() * 540, y: 30 + rnd() * 380, r: 0.8 + rnd() * 1.6 }));
+const inEllipse = (x: number, y: number) => {
+  const a = (-24 * Math.PI) / 180;
+  const dx = x - 340;
+  const dy = y - 215;
+  const u = dx * Math.cos(a) + dy * Math.sin(a);
+  const v = -dx * Math.sin(a) + dy * Math.cos(a);
+  return (u / 135) ** 2 + (v / 72) ** 2 < 1;
+};
+const hosts = Array.from({ length: 26 }, () => {
+  const a = rnd() * Math.PI * 2;
+  const rr = Math.sqrt(rnd());
+  const ang = (-24 * Math.PI) / 180;
+  const u = Math.cos(a) * rr * 125;
+  const v = Math.sin(a) * rr * 62;
+  return { x: 340 + u * Math.cos(ang) - v * Math.sin(ang), y: 215 + u * Math.sin(ang) + v * Math.cos(ang), r: 2.2 + rnd() * 2.2 };
+});
+
+// inspiral: two arms spiralling inward
+const arm = (phase: number) => {
+  const pts: string[] = [];
+  const turns = 3.2;
+  const steps = 240;
+  const k = Math.log(200 / 14);
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const th = t * turns * 2 * Math.PI + phase;
+    const r = 200 * Math.exp(-k * t);
+    pts.push(`${(300 + r * Math.cos(th)).toFixed(1)},${(220 + r * Math.sin(th)).toFixed(1)}`);
+  }
+  return 'M ' + pts.join(' L ');
+};
+const armEnd = (phase: number) => {
+  const th = 3.2 * 2 * Math.PI + phase;
+  return { x: 300 + 14 * Math.cos(th), y: 220 + 14 * Math.sin(th) };
+};
+const endA = armEnd(0);
+const endB = armEnd(Math.PI);
+---
+
+<svg viewBox="0 0 600 440" class="h-full w-full" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  {
+    variant === 'heterostructure' && (
+      <>
+        <g class="fill-none stroke-ink" stroke-width="1.1" opacity="0.8">
+          {latticeA.map((p) => <polygon points={p} />)}
+        </g>
+        <g class="fill-none stroke-ember transition-transform duration-[900ms] ease-out motion-safe:group-hover:-translate-y-2 motion-safe:group-hover:translate-x-4" stroke-width="1.4">
+          {latticeB.map((p) => <polygon points={p} />)}
+        </g>
+        <g class="transition-transform duration-[900ms] ease-out motion-safe:group-hover:translate-y-3">
+          <line x1="420" y1="110" x2="420" y2="330" class="stroke-ink" stroke-width="1.2" stroke-dasharray="3 6" />
+          <circle cx="420" cy="110" r="9" class="fill-ember stroke-ink" stroke-width="1.5" />
+          <circle cx="420" cy="330" r="9" class="fill-paper stroke-ink" stroke-width="1.5" />
+        </g>
+      </>
+    )
+  }
+
+  {
+    variant === 'trilayer' && (
+      <>
+        <polygon points={rhombus(300, 330)} class="fill-ink/10 stroke-ink" stroke-width="1.4" />
+        <g class="transition-transform duration-[900ms] ease-out motion-safe:group-hover:-translate-y-3">
+          <polygon points={rhombus(300, 235)} class="fill-ember/25 stroke-ember" stroke-width="1.6" />
+        </g>
+        <g class="transition-transform duration-[900ms] ease-out motion-safe:group-hover:-translate-y-7">
+          <polygon points={rhombus(300, 140)} class="fill-ink/10 stroke-ink" stroke-width="1.4" />
+        </g>
+        <line x1="300" y1="140" x2="300" y2="330" class="stroke-ink" stroke-width="1.2" stroke-dasharray="3 6" />
+        <circle cx="300" cy="140" r="9" class="fill-ember stroke-ink" stroke-width="1.5" />
+        <circle cx="300" cy="330" r="9" class="fill-paper stroke-ink" stroke-width="1.5" />
+      </>
+    )
+  }
+
+  {
+    variant === 'decay' && (
+      <>
+        <g class="stroke-ink" stroke-width="1.2" fill="none">
+          <path d="M 70 40 V 360 H 570" />
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => <path d={`M ${110 + i * 60} 360 v 8`} />)}
+        </g>
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d={decay(260, 38)} class="stroke-ink" stroke-width="2" />
+          <path d={decay(225, 95)} class="stroke-ember transition-all duration-700 motion-safe:group-hover:[stroke-width:5]" stroke-width="3" />
+          <path d={decay(190, 210)} class="stroke-ink" stroke-width="1.5" stroke-dasharray="2 7" />
+        </g>
+        <text x="76" y="34" class="fill-graphite font-mono" font-size="12">ΔR / R</text>
+        <text x="540" y="396" class="fill-graphite font-mono" font-size="12">t →</text>
+      </>
+    )
+  }
+
+  {
+    variant === 'sky' && (
+      <>
+        <g class="fill-none stroke-paper" stroke-width="0.8" opacity="0.28">
+          {[-4, -3, -2, -1, 0, 1, 2, 3, 4].map((i) => <path d={`M ${300 + i * 62} 20 Q ${300 + i * 62 * 1.45} 220 ${300 + i * 62} 420`} />)}
+          {[0, 1, 2, 3, 4].map((j) => <path d={`M 20 ${60 + j * 80} Q 300 ${60 + j * 80 + (j - 2) * 30} 580 ${60 + j * 80}`} />)}
+        </g>
+        <g class="fill-paper">
+          {field.filter((s) => !inEllipse(s.x, s.y)).map((s) => <circle cx={s.x} cy={s.y} r={s.r} opacity="0.65" />)}
+        </g>
+        <g class="origin-center transition-transform duration-[900ms] ease-out [transform-box:fill-box] motion-safe:group-hover:scale-110">
+          <ellipse cx="340" cy="215" rx="135" ry="72" transform="rotate(-24 340 215)" class="fill-ember/15 stroke-ember" stroke-width="1.6" stroke-dasharray="6 5" />
+          {hosts.map((h) => <circle cx={h.x} cy={h.y} r={h.r} class="fill-ember" />)}
+        </g>
+        <text x="30" y="414" class="fill-paper font-mono" font-size="12" opacity="0.7">≈ 100 deg² · millions of candidates</text>
+      </>
+    )
+  }
+
+  {
+    variant === 'inspiral' && (
+      <>
+        <g class="fill-none stroke-ink" stroke-width="0.8" opacity="0.25">
+          {[240, 280, 320, 360].map((r) => <circle cx="300" cy="220" r={r} />)}
+        </g>
+        <g class="origin-center transition-transform duration-[1400ms] ease-out [transform-box:fill-box] motion-safe:group-hover:rotate-[24deg]">
+          <path d={arm(0)} class="fill-none stroke-ember" stroke-width="2.4" stroke-linecap="round" />
+          <path d={arm(Math.PI)} class="fill-none stroke-ink" stroke-width="2.4" stroke-linecap="round" />
+          <circle cx={endA.x} cy={endA.y} r="8" class="fill-ember stroke-ink" stroke-width="1.5" />
+          <circle cx={endB.x} cy={endB.y} r="8" class="fill-ink" />
+        </g>
+      </>
+    )
+  }
+  {
+    variant === 'plans' && (
+      <>
+        <g class="fill-none stroke-ink" stroke-width="1.2">
+          {levels.map((l, i) => <polygon points={isodose(155, 195, 112 * l)} opacity={0.35 + i * 0.13} />)}
+        </g>
+        <polygon points={isodose(155, 195, 112 * 0.26 * 0.7)} class="fill-ember/40 stroke-ember" stroke-width="1.5" />
+        <g class="origin-center transition-transform duration-[900ms] ease-out [transform-box:fill-box] motion-safe:group-hover:scale-[1.06]">
+          <g class="fill-none stroke-ink" stroke-width="1.2">
+            {levels.map((l, i) => <polygon points={isodose(445, 195, 112 * (0.62 + 0.38 * l))} opacity={0.35 + i * 0.13} />)}
+          </g>
+          <polygon points={isodose(445, 195, 112 * 0.26 * 0.7)} class="fill-ember stroke-ink" stroke-width="1.5" />
+        </g>
+        <text x="155" y="350" text-anchor="middle" class="fill-graphite font-mono" font-size="13">plan A</text>
+        <text x="445" y="350" text-anchor="middle" class="fill-graphite font-mono" font-size="13">plan B</text>
+        <path d="M 262 195 H 338 M 326 183 L 338 195 L 326 207" class="fill-none stroke-ink" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+        <text x="300" y="400" text-anchor="middle" class="fill-ink font-mono" font-size="12">score gap &gt; 20 → clinician's pick, 90% of the time</text>
+      </>
+    )
+  }
+</svg>

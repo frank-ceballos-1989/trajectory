@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { publications, scholarSearch } from '../data/publications';
+import { site } from '../data/site';
+
+const years = [...new Set(publications.map((p) => p.year))].sort((a, b) => b - a);
+const firstCount = publications.filter((p) => p.first).length;
+---
+
+<BaseLayout title="Publications" description="Peer-reviewed publications by Frank Ceballos on ultrafast spectroscopy of two-dimensional materials, 2014–2018.">
+  <section class="mx-auto max-w-[88rem] px-5 pb-28 pt-14 sm:px-8 lg:px-12 lg:pt-20">
+    <p class="eyebrow text-graphite">Publications · {publications.length} papers · 2014–2018</p>
+    <h1 class="display-soft mt-6 text-display-xl font-medium !text-[clamp(3.5rem,13vw,12rem)]">Papers.</h1>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-12">
+      <p class="max-w-2xl text-xl leading-relaxed lg:col-span-6 lg:col-start-1">
+        {publications.length} papers on how charge and excitons behave in atomically thin semiconductors, written in Hui Zhao’s Ultrafast Laser Lab at the University of Kansas. I am first author on {firstCount}.
+      </p>
+      <div class="lg:col-span-4 lg:col-start-9">
+        <p class="eyebrow text-graphite">Filter</p>
+        <div class="mt-3 flex gap-2" role="group" aria-label="Filter publications">
+          <button type="button" class="filter-btn rounded-full border border-ink px-4 py-1.5 text-sm" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-btn rounded-full border border-ink px-4 py-1.5 text-sm" data-filter="first" aria-pressed="false">First author</button>
+        </div>
+        <p class="mt-6 text-sm text-graphite">
+          Source: <a class="link-u" href={site.links.kuProfile} target="_blank" rel="noopener noreferrer">KU Ultrafast Laser Lab profile</a>.
+          {site.links.scholar && (<> Citation counts: <a class="link-u" href={site.links.scholar} target="_blank" rel="noopener noreferrer">Google Scholar</a>.</>)}
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-20 border-t border-ink">
+      {
+        years.map((y) => (
+          <section class="year-group grid gap-6 border-b border-ink/25 py-10 lg:grid-cols-12" aria-label={`Publications from ${y}`}>
+            <h2 class="display-soft text-display-lg text-ember-deep lg:col-span-3 lg:sticky lg:top-24 lg:self-start">{y}</h2>
+            <ul class="lg:col-span-9">
+              {publications
+                .filter((p) => p.year === y)
+                .map((p) => (
+                  <li id={p.id} data-first={p.first} class="pub reveal scroll-mt-24 border-t border-ink/15 py-6 first:border-t-0 first:pt-0">
+                    <p class="eyebrow text-graphite">{p.first ? 'First author' : 'Co-author'} · {p.venue} {p.detail}</p>
+                    <h3 class="mt-2 text-display-sm">
+                      <a href={scholarSearch(p.title)} target="_blank" rel="noopener noreferrer" class="link-u">{p.title}</a>
+                    </h3>
+                    <p class="mt-3 max-w-3xl text-sm leading-relaxed text-graphite">
+                      {p.authors.map((a, i) => (
+                        <>
+                          {a === 'F. Ceballos' ? <strong class="font-semibold text-ink">{a}</strong> : a}
+                          {i < p.authors.length - 1 ? ', ' : ''}
+                        </>
+                      ))}
+                    </p>
+                  </li>
+                ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+
+    <aside class="mt-20 grid gap-8 lg:grid-cols-12">
+      <h2 class="display-soft text-display-md lg:col-span-5">Beyond the lab group</h2>
+      <ul class="space-y-6 lg:col-span-6 lg:col-start-7">
+        <li>
+          <p class="eyebrow text-graphite">Journal supplement abstract · 2019</p>
+          <p class="mt-2 font-display text-xl">A Machine Learning Based Approach for Fast and Automated Plan Quality Evaluation for Online Adaptive Radiation Therapy</p>
+          <p class="mt-1 text-sm text-graphite">F. Ceballos, S. N. Lim, Z. Wang, J. Zhang, H. Nasief, E. E. Ahunbay, A. Li · Int. J. Radiation Oncology Biol. Phys. 105(1), S251–S252</p>
+          <a href="/mcw#plan-quality-2019" class="link-u mt-2 inline-block py-1 text-sm">Summary, plus four more MCW contributions →</a>
+        </li>
+        <li>
+          <p class="eyebrow text-graphite">Proceedings · 2011</p>
+          <p class="mt-2 font-display text-xl">Detecting Double Degenerate Progenitors of SNe Ia with LISA</p>
+          <p class="mt-1 text-sm text-graphite">A. Stroeer, M. Benacquista, F. Ceballos · IAU Symposium 281</p>
+          <a href="/archive#arxiv" class="link-u mt-2 inline-block py-1 text-sm">Abstract and links →</a>
+        </li>
+        <li>
+          <p class="eyebrow text-graphite">Article · 2012</p>
+          <p class="mt-2 font-display text-xl">Update: Gravitational Wave Galaxy Catalogue for the Rapid Search of Electromagnetic Counterparts from Gravitational Waves</p>
+          <p class="mt-1 text-sm text-graphite">F. Ceballos · IEEE Earthzine, URC Virtual Poster Session</p>
+          <a href="/archive#earthzine" class="link-u mt-2 inline-block py-1 text-sm">Preserved copy →</a>
+        </li>
+      </ul>
+    </aside>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .filter-btn {
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+  .filter-btn:hover:not([aria-pressed='true']) {
+    background: rgb(20 17 14 / 0.08);
+  }
+  .filter-btn:active {
+    transform: scale(0.97);
+  }
+  .filter-btn[aria-pressed='true'] {
+    background: #14110e;
+    color: #f2ede3;
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const rows = document.querySelectorAll<HTMLElement>('.pub');
+  const groups = document.querySelectorAll<HTMLElement>('.year-group');
+
+  function apply(filter: string) {
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
+    rows.forEach((r) => (r.hidden = filter === 'first' && r.dataset.first !== 'true'));
+    groups.forEach((g) => (g.hidden = ![...g.querySelectorAll<HTMLElement>('.pub')].some((r) => !r.hidden)));
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
+</script>

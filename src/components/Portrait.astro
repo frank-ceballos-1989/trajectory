@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import { hexGrid } from '../lib/hex';
+import { site } from '../data/site';
+
+// Drop a photo at src/assets/portrait.jpg (or .png/.webp) and it replaces the lattice automatically.
+const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
+const portrait = Object.values(found)[0]?.default;
+
+const cells = hexGrid(8, 11, 30, -8, 6);
+---
+
+<figure class="relative w-full">
+  <div class="relative aspect-[3/4]">
+    <div class="absolute inset-0 translate-x-3 translate-y-3 rounded-t-full border border-ink" aria-hidden="true"></div>
+    <div class="relative h-full w-full overflow-hidden rounded-t-full bg-sand">
+      {
+        portrait ? (
+          <Image src={portrait} alt={`Portrait of ${site.name}`} widths={[320, 480, 640]} sizes="(min-width: 1024px) 24rem, 60vw" class="h-full w-full object-cover" loading="lazy" />
+        ) : (
+          <>
+            <svg viewBox="0 0 400 540" class="absolute inset-0 h-full w-full" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+              <g fill="none" stroke="#14110E" stroke-width="1" opacity="0.5">
+                {cells.map((p) => <polygon points={p} />)}
+              </g>
+              <g fill="#E2512B" opacity="0.9">
+                <polygon points={cells[37]} />
+                <polygon points={cells[46]} />
+              </g>
+            </svg>
+            <p class="absolute inset-x-0 bottom-[12%] text-center font-display text-[clamp(4.5rem,9vw,7.5rem)] italic leading-none tracking-tight display-soft">
+              FC
+            </p>
+          </>
+        )
+      }
+    </div>
+  </div>
+  <figcaption class="eyebrow mt-6 text-graphite">
+    {portrait ? site.name : 'Honeycomb lattice, after MoS₂'}
+  </figcaption>
+</figure>

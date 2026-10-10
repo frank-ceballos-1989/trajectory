@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { mcwIntro, workNote, works, sources } from '../data/mcw';
+
+const ext = { target: '_blank', rel: 'noopener noreferrer' } as const;
+---
+
+<BaseLayout
+  title="Radiation oncology research at MCW"
+  description="Frank Ceballos at the Medical College of Wisconsin: machine learning for online adaptive radiotherapy, plan-quality evaluation and auto-segmentation quality assurance, 2018 onward."
+>
+  <!-- ========== Intro ========== -->
+  <section class="mx-auto max-w-[88rem] px-5 pb-20 pt-14 sm:px-8 lg:px-12 lg:pb-28 lg:pt-20">
+    <p class="eyebrow text-graphite">{mcwIntro.institution} · {mcwIntro.department} · {mcwIntro.period}</p>
+    <h1 class="display-soft mt-6 font-medium text-display-xl !text-[clamp(3.25rem,12vw,11rem)]">
+      <span class="reveal block">Plans,</span>
+      <span class="reveal block italic font-normal sm:ml-[8vw]" style="--d:120ms">ranked fast.</span>
+    </h1>
+
+    <div class="mt-14 grid gap-12 lg:grid-cols-12">
+      <p class="reveal font-display text-display-sm lg:col-span-5">{mcwIntro.lede}</p>
+      <div class="space-y-6 text-lg leading-[1.7] lg:col-span-5 lg:col-start-8">
+        {mcwIntro.paragraphs.map((p, i) => <p class="reveal" style={`--d:${i * 90}ms`}>{p}</p>)}
+        <p class="eyebrow reveal pt-2 text-graphite">{mcwIntro.areas}</p>
+      </div>
+    </div>
+
+    <nav aria-label="On this page" class="mt-14 flex flex-wrap gap-x-8 gap-y-2 border-t border-ink/25 pt-5 text-sm">
+      {
+        works.map((w, i) => (
+          <a class="link-u py-1" href={`#${w.id}`}>
+            {String(i + 1).padStart(2, '0')} · {w.date}
+          </a>
+        ))
+      }
+      <a class="link-u py-1" href="#records">Records</a>
+    </nav>
+  </section>
+
+  <!-- ========== The five projects ========== -->
+  <section aria-labelledby="abstracts-title" class="border-t border-ink">
+    <div class="mx-auto max-w-[88rem] px-5 pb-6 pt-20 sm:px-8 lg:px-12 lg:pt-28">
+      <h2 id="abstracts-title" class="reveal display-soft text-display-lg">What each project asked.</h2>
+      <p class="reveal mt-6 max-w-2xl text-graphite">{workNote}</p>
+    </div>
+
+    <div class="mt-12">
+      {
+        works.map((w, idx) => (
+          <article id={w.id} class:list={['scroll-mt-20 border-t border-ink py-16 sm:py-20', idx % 2 === 0 && 'bg-sand']}>
+            <div class="mx-auto grid max-w-[88rem] gap-12 px-5 sm:px-8 lg:grid-cols-12 lg:px-12">
+              <aside class="lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
+                <p class="eyebrow text-graphite">{String(idx + 1).padStart(2, '0')} · {w.kind}</p>
+                <dl class="mt-6 divide-y divide-ink/20 border-y border-ink/20 text-sm">
+                  <div class="grid grid-cols-[5.5rem_1fr] gap-3 py-3"><dt class="eyebrow pt-0.5 text-graphite">Date</dt><dd>{w.date}</dd></div>
+                  <div class="grid grid-cols-[5.5rem_1fr] gap-3 py-3"><dt class="eyebrow pt-0.5 text-graphite">Venue</dt><dd>{w.venue}</dd></div>
+                  {w.detail && <div class="grid grid-cols-[5.5rem_1fr] gap-3 py-3"><dt class="eyebrow pt-0.5 text-graphite">Volume</dt><dd>{w.detail}</dd></div>}
+                </dl>
+                {
+                  w.link && (
+                    <a class="link-u mt-6 inline-block py-1 text-sm" href={w.link.href} {...ext}>
+                      {w.link.label} ↗<span class="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  )
+                }
+              </aside>
+
+              <div class="min-w-0 lg:col-span-8">
+                <h3 class="reveal display-soft text-display-md">{w.title}</h3>
+
+                <p class="reveal mt-8 border-l-2 border-ember-deep pl-5 font-display text-xl italic leading-snug">{w.question}</p>
+
+                <div class="mt-10 space-y-5 text-lg leading-[1.75]">
+                  {w.summary.map((p) => <p class="reveal">{p}</p>)}
+                </div>
+
+                {
+                  w.findings && (
+                    <div class="reveal mt-10">
+                      <h4 class="eyebrow text-graphite">Reported results</h4>
+                      <ul class="mt-4 space-y-3">
+                        {w.findings.map((f) => (
+                          <li class="flex gap-3 text-lg leading-relaxed">
+                            <span aria-hidden="true" class="mt-[0.8em] h-px w-5 shrink-0 bg-ember-deep" />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )
+                }
+
+                {
+                  w.table && (
+                    <div class="reveal mt-10">
+                      <div class="overflow-x-auto">
+                        <table class="w-full min-w-[22rem] border-y border-ink text-left">
+                          <caption class="eyebrow pb-3 text-left text-graphite">{w.table.caption}</caption>
+                          <thead>
+                            <tr class="border-b border-ink/40">
+                              <th scope="col" class="eyebrow py-2 pr-4 font-normal text-graphite">{w.table.head[0]}</th>
+                              <th scope="col" class="eyebrow py-2 text-right font-normal text-graphite">{w.table.head[1]}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {w.table.rows.map(([k, v]) => (
+                              <tr class="border-b border-ink/15 last:border-0">
+                                <th scope="row" class="py-3 pr-4 font-normal">{k}</th>
+                                <td class="py-3 text-right font-mono text-sm">{v}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      {w.table.note && <p class="mt-3 max-w-xl text-sm leading-relaxed text-graphite">{w.table.note}</p>}
+                    </div>
+                  )
+                }
+
+                <p class="reveal mt-10 font-display text-xl leading-snug">
+                  <span class="eyebrow mr-3 align-middle text-ember-deep">Why it matters</span>{w.why}
+                </p>
+
+                <p class="mt-10 text-sm leading-relaxed text-graphite">
+                  <span class="eyebrow mr-2">Authors</span>{w.authors}
+                </p>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ========== Records ========== -->
+  <section id="records" aria-labelledby="records-title" class="scroll-mt-20 border-t border-ink bg-ink py-20 text-paper sm:py-28">
+    <div class="mx-auto grid max-w-[88rem] gap-12 px-5 sm:px-8 lg:grid-cols-12 lg:px-12">
+      <div class="lg:col-span-4">
+        <p class="eyebrow text-paper/75">Records</p>
+        <h2 id="records-title" class="reveal display-soft mt-6 text-display-md">Where to check my work.</h2>
+        <p class="mt-6 max-w-sm text-sm leading-relaxed text-paper/75">
+          Compiled from public sources on {mcwIntro.compiled}. A guide to the record, not a certified bibliography.
+        </p>
+        <a href="/publications" class="link-u mt-6 inline-block py-1 text-sm">The physics that came first: sixteen Kansas papers →</a>
+      </div>
+
+      <ul class="divide-y divide-paper/20 border-y border-paper/20 lg:col-span-7 lg:col-start-6">
+        {
+          sources.map((s) => (
+            <li>
+              <a class="group grid gap-1 py-5 md:grid-cols-12 md:gap-8" href={s.href} {...ext}>
+                <span class="font-display text-xl md:col-span-4">{s.t}</span>
+                <span class="text-paper/70 md:col-span-5">{s.d}</span>
+                <span class="text-sm md:col-span-3 md:text-right">
+                  {s.label}
+                  <span aria-hidden="true" class="inline-block transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"> ↗</span>
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

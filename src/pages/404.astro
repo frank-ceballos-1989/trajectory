@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Off trajectory" description="That page does not exist.">
+  <section class="mx-auto flex min-h-[70svh] max-w-[88rem] flex-col justify-center px-5 py-20 sm:px-8 lg:px-12">
+    <p class="eyebrow text-graphite">404 · Page not found</p>
+    <h1 class="display-soft mt-6 font-medium text-display-xl !text-[clamp(3.5rem,13vw,12rem)]">Off <em class="font-normal">course.</em></h1>
+    <p class="mt-10 max-w-md text-xl leading-relaxed">Nothing lives at this address. The story starts at the beginning.</p>
+    <p class="mt-8">
+      <a href="/" class="btn group">
+        Back to the start
+        <span aria-hidden="true" class="btn-arrow group-hover:translate-x-1">→</span>
+      </a>
+    </p>
+  </section>
+</BaseLayout>
