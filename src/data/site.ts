@@ -34,7 +34,7 @@ export const nav = [
 
 export const hero = {
   eyebrow: 'Physics · Medicine · Freight',
-  lede: 'I measure things in motion: electrons, in trillionths of a second; radiation dose, in the minutes a patient is waiting; and now freight, on its way around the world.',
+  lede: 'I measure things in motion, and these days that is freight, on its way around the world. Before that it was radiation dose, and before that electrons.',
   facts: [
     { k: 'Now', v: 'Lead developer, Freight Fusion' },
     { k: 'Since 2020', v: 'ExxonMobil' },
@@ -52,6 +52,7 @@ export const about = {
   credentials: [
     { k: 'B.S.', v: 'Physics, University of Texas at Brownsville, 2012' },
     { k: 'Ph.D.', v: 'Physics, University of Kansas, 2017' },
-    { k: 'Training', v: 'Medical physics, two years, Medical College of Wisconsin' },
+    { k: 'Postdoc', v: 'Radiation Oncology, Medical College of Wisconsin, 2018–20' },
+    { k: 'Training', v: 'CAMPEP-accredited medical physics training, two years, Medical College of Wisconsin' },
   ],
 } as const;

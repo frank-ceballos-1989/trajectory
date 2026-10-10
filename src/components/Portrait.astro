@@ -1,13 +1,54 @@
 ---
 import { Image } from 'astro:assets';
-import { hexGrid } from '../lib/hex';
+import { hexPoints, seeded } from '../lib/hex';
 import { site } from '../data/site';
 
 // Drop a photo at src/assets/portrait.jpg (or .png/.webp) and it replaces the lattice automatically.
 const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
 const portrait = Object.values(found)[0]?.default;
 
-const cells = hexGrid(8, 11, 30, -8, 6);
+// One figure, three stages of the work: a galaxy, a honeycomb lattice, a tanker. A single ember path runs through all three.
+const rnd = seeded(20260110);
+
+// 1. Galaxy: two tilted spiral arms of stars, a dense core and a few strays.
+const core = { x: 200, y: 118 };
+const tilt = (-22 * Math.PI) / 180;
+const galaxyPoint = (r: number, th: number) => {
+  const x = r * Math.cos(th);
+  const y = r * Math.sin(th) * 0.5;
+  return { x: core.x + x * Math.cos(tilt) - y * Math.sin(tilt), y: core.y + x * Math.sin(tilt) + y * Math.cos(tilt) };
+};
+const stars = [0, Math.PI].flatMap((phase) =>
+  Array.from({ length: 62 }, (_, i) => {
+    const t = (i + rnd() * 0.8) / 62;
+    const r = 10 + 92 * t + (rnd() - 0.5) * 10 * (0.4 + t);
+    const p = galaxyPoint(r, phase + t * 1.6 * Math.PI * 2 + (rnd() - 0.5) * 0.35);
+    return { ...p, r: 0.9 + rnd() * 1.5 * (1 - 0.4 * t), o: 0.35 + rnd() * 0.55 };
+  }),
+);
+const coreStars = Array.from({ length: 18 }, () => {
+  const p = galaxyPoint(rnd() * 14, rnd() * Math.PI * 2);
+  return { ...p, r: 0.8 + rnd() * 1.2, o: 0.6 + rnd() * 0.4 };
+});
+const strays = Array.from({ length: 36 }, () => ({ x: 20 + rnd() * 360, y: 14 + rnd() * 180, r: 0.7 + rnd() * 0.5, o: 0.15 + rnd() * 0.2 }));
+
+// 2. Lattice: the stars settle into cells. Rows grow from small dots into full hexagons going down.
+const cellW = Math.sqrt(3) * 20;
+const lattice = Array.from({ length: 5 }, (_, j) => {
+  const t = j / 4;
+  return Array.from({ length: 12 }, (_, i) => ({
+    points: hexPoints(-4 + i * cellW + (j % 2 ? cellW / 2 : 0), 204 + j * 30, 5 + 15 * t),
+    o: 0.25 + 0.5 * t,
+  }));
+}).flat();
+
+// 3. Vessel: a loaded tanker in side view, bow to the right. The hull carries the same lattice as texture.
+const hull = 'M 34 444 H 376 L 366 474 Q 352 496 320 496 H 78 Q 42 496 34 468 Z';
+const hullCells = Array.from({ length: 3 }, (_, j) =>
+  Array.from({ length: 30 }, (_, i) => hexPoints(50 + i * Math.sqrt(3) * 6 + (j % 2 ? Math.sqrt(3) * 3 : 0), 452 + j * 9, 6)),
+).flat();
+const wave = (y: number, x0: number) => `M ${x0} ${y} ` + Array.from({ length: 9 }, (_, i) => (i === 0 ? 'q 25 -8 50 0' : 't 50 0')).join(' ');
+const deckPosts = Array.from({ length: 9 }, (_, i) => 128 + i * 26);
 ---
 
 <figure class="relative w-full">
@@ -19,24 +60,66 @@ const cells = hexGrid(8, 11, 30, -8, 6);
           <Image src={portrait} alt={`Portrait of ${site.name}`} widths={[320, 480, 640]} sizes="(min-width: 1024px) 24rem, 60vw" class="h-full w-full object-cover" loading="lazy" />
         ) : (
           <>
-            <svg viewBox="0 0 400 540" class="absolute inset-0 h-full w-full" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-              <g fill="none" stroke="#14110E" stroke-width="1" opacity="0.5">
-                {cells.map((p) => <polygon points={p} />)}
+            <svg viewBox="0 0 400 540" class="absolute inset-0 h-full w-full" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">
+              <!-- Sky -->
+              <g class="fill-ink">
+                {strays.map((s) => <circle cx={s.x.toFixed(1)} cy={s.y.toFixed(1)} r={s.r.toFixed(2)} opacity={s.o.toFixed(2)} />)}
+                {stars.map((s) => <circle cx={s.x.toFixed(1)} cy={s.y.toFixed(1)} r={s.r.toFixed(2)} opacity={s.o.toFixed(2)} />)}
+                {coreStars.map((s) => <circle cx={s.x.toFixed(1)} cy={s.y.toFixed(1)} r={s.r.toFixed(2)} opacity={s.o.toFixed(2)} />)}
               </g>
-              <g fill="#E2512B" opacity="0.9">
-                <polygon points={cells[37]} />
-                <polygon points={cells[46]} />
+
+              <!-- Lattice -->
+              <g class="fill-none stroke-ink" stroke-width="1.1">
+                {lattice.map((c) => <polygon points={c.points} opacity={c.o.toFixed(2)} />)}
               </g>
+
+              <!-- Vessel -->
+              <path d={hull} class="fill-ink" />
+              <g class="fill-none stroke-paper" stroke-width="0.7" opacity="0.3">
+                {hullCells.map((p) => <polygon points={p} />)}
+              </g>
+              <ellipse cx="366" cy="486" rx="9" ry="5" class="fill-ink" />
+              <g class="fill-ink">
+                <rect x="50" y="402" width="46" height="42" />
+                <rect x="46" y="394" width="54" height="9" />
+                <rect x="78" y="376" width="14" height="18" />
+              </g>
+              <rect x="78" y="380" width="14" height="5" class="fill-ember" />
+              <path d="M 54 398.5 H 92" class="stroke-paper" stroke-width="2" stroke-dasharray="4 3" fill="none" />
+              <path d="M 62 394 V 366 M 55 372 H 69" class="fill-none stroke-ink" stroke-width="1.5" />
+              <g class="fill-none stroke-ink" stroke-width="2" stroke-linecap="round">
+                <path d="M 118 436 H 352" />
+                {deckPosts.map((x) => <path d={`M ${x} 436 V 444`} />)}
+                <path d="M 230 444 V 418 L 262 432" />
+                <path d="M 348 444 V 420" />
+              </g>
+              <!-- Sea: lightens the hull below the waterline, then three lines of swell -->
+              <rect x="0" y="476" width="400" height="64" class="fill-sand" opacity="0.72" />
+              <g class="fill-none stroke-ink" stroke-width="1.2" stroke-linecap="round">
+                <path d={wave(482, 0)} opacity="0.55" />
+                <path d={wave(502, -25)} opacity="0.35" />
+                <path d={wave(522, 0)} opacity="0.2" />
+              </g>
+
+              <!-- Trajectory: from the galaxy, through the lattice, to the vessel -->
+              <path
+                class="draw fill-none stroke-ember"
+                pathLength="1"
+                d="M 200 118 C 268 190 118 250 176 318 C 234 386 262 396 230 418"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                style="animation-delay:0.9s;animation-duration:2.8s"
+              />
+              <circle cx="200" cy="118" r="7" class="pop fill-ember stroke-ink" stroke-width="1.5" style="animation-delay:0.7s" />
+              <polygon points={hexPoints(176, 318, 13)} class="pop fill-paper stroke-ink" stroke-width="1.5" style="animation-delay:2.2s" />
+              <circle cx="230" cy="418" r="8" class="pop fill-ember stroke-ink" stroke-width="1.5" style="animation-delay:3.4s" />
             </svg>
-            <p class="absolute inset-x-0 bottom-[12%] text-center font-display text-[clamp(4.5rem,9vw,7.5rem)] italic leading-none tracking-tight display-soft">
-              FC
-            </p>
           </>
         )
       }
     </div>
   </div>
   <figcaption class="eyebrow mt-6 text-graphite">
-    {portrait ? site.name : 'Honeycomb lattice, after MoS₂'}
+    {portrait ? site.name : 'Sky, lattice, vessel'}
   </figcaption>
 </figure>

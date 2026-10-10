@@ -1,6 +1,7 @@
 /**
- * Publications as listed on https://ultrafast.ku.edu/people/frank-ceballos (VERIFIED).
- * DOIs and citation counts are intentionally omitted until verified.
+ * Publications as listed on https://ultrafast.ku.edu/people/frank-ceballos, plus two Kansas papers found in OpenAlex
+ * (a public index built on Crossref) with Frank in the author list. DOIs come from OpenAlex.
+ * Citation counts are intentionally omitted.
  */
 export interface Publication {
   id: string;
@@ -8,7 +9,8 @@ export interface Publication {
   title: string;
   authors: string[];
   venue: string;
-  detail: string; // volume, pages
+  detail: string; // volume, pages; empty when not yet checked
+  doi?: string;
   first: boolean; // Frank is first author
 }
 
@@ -20,6 +22,7 @@ export const publications: Publication[] = [
     authors: ['F. Ceballos', 'P. Zereshki', 'H. Zhao'],
     venue: 'Physical Review Materials',
     detail: '1, 044001',
+    doi: '10.1103/physrevmaterials.1.044001',
     first: true,
   },
   {
@@ -29,6 +32,7 @@ export const publications: Publication[] = [
     authors: ['F. Ceballos', 'M.-G. Ju', 'S. D. Lane', 'X. C. Zeng', 'H. Zhao'],
     venue: 'Nano Letters',
     detail: '17, 1623–1628',
+    doi: '10.1021/acs.nanolett.6b04815',
     first: true,
   },
   {
@@ -38,6 +42,7 @@ export const publications: Publication[] = [
     authors: ['F. Ceballos', 'H. Zhao'],
     venue: 'Advanced Functional Materials',
     detail: '27, 1604509',
+    doi: '10.1002/adfm.201604509',
     first: true,
   },
   {
@@ -47,6 +52,7 @@ export const publications: Publication[] = [
     authors: ['F. Ceballos', 'Q. Cui', 'M. Z. Bellus', 'H. Zhao'],
     venue: 'Nanoscale',
     detail: '8, 11681–11688',
+    doi: '10.1039/c6nr02516a',
     first: true,
   },
   {
@@ -56,7 +62,18 @@ export const publications: Publication[] = [
     authors: ['F. Ceballos', 'M. Z. Bellus', 'H.-Y. Chiu', 'H. Zhao'],
     venue: 'Nanoscale',
     detail: '7, 17523–17528',
+    doi: '10.1039/c5nr04723d',
     first: true,
+  },
+  {
+    id: 'acsnano-2015-trions',
+    year: 2015,
+    title: 'Tightly Bound Trions in Transition Metal Dichalcogenide Heterostructures',
+    authors: ['M. Z. Bellus', 'F. Ceballos', 'H.-Y. Chiu', 'H. Zhao'],
+    venue: 'ACS Nano',
+    detail: '',
+    doi: '10.1021/acsnano.5b02144',
+    first: false,
   },
   {
     id: 'acsnano-2014-separation',
@@ -65,6 +82,7 @@ export const publications: Publication[] = [
     authors: ['F. Ceballos', 'M. Z. Bellus', 'H.-Y. Chiu', 'H. Zhao'],
     venue: 'ACS Nano',
     detail: '8, 12717',
+    doi: '10.1021/nn505736z',
     first: true,
   },
   {
@@ -74,6 +92,7 @@ export const publications: Publication[] = [
     authors: ['P. Zereshki', 'Y. Wei', 'F. Ceballos', 'M. Z. Bellus', 'S. D. Lane', 'S. Pan', 'R. Long', 'H. Zhao'],
     venue: 'Nanoscale',
     detail: '10, 11307–11313',
+    doi: '10.1039/c8nr02540a',
     first: false,
   },
   {
@@ -83,6 +102,7 @@ export const publications: Publication[] = [
     authors: ['Y. Li', 'Q. Cui', 'F. Ceballos', 'S. D. Lane', 'Z. Qi', 'H. Zhao'],
     venue: 'Nano Letters',
     detail: '17, 6661',
+    doi: '10.1021/acs.nanolett.7b02608',
     first: false,
   },
   {
@@ -91,7 +111,8 @@ export const publications: Publication[] = [
     title: 'Suppression of Defects and Deep Levels Using Isoelectronic Tungsten Alloying in Monolayer MoSe2',
     authors: ['X. Li', 'A. A. Puretzky', 'X. Sang', 'S. KC', 'M. Tian', 'F. Ceballos', 'M. Mahjouri-Samani', 'K. Wang', 'R. R. Unocic', 'H. Zhao', 'C. M. Rouleau', 'D. B. Geohegan', 'K. Xiao'],
     venue: 'Advanced Functional Materials',
-    detail: '27, 1603805',
+    detail: '27, 1603850',
+    doi: '10.1002/adfm.201603850',
     first: false,
   },
   {
@@ -101,6 +122,7 @@ export const publications: Publication[] = [
     authors: ['M. Z. Bellus', 'M. Li', 'S. D. Lane', 'F. Ceballos', 'Q. Cui', 'X. C. Zeng', 'H. Zhao'],
     venue: 'Nanoscale Horizons',
     detail: '2, 31–36',
+    doi: '10.1039/c6nh00144k',
     first: false,
   },
   {
@@ -110,6 +132,7 @@ export const publications: Publication[] = [
     authors: ['S. Pan', 'F. Ceballos', 'M. Z. Bellus', 'P. Zereshki', 'H. Zhao'],
     venue: '2D Materials',
     detail: '4, 015033',
+    doi: '10.1088/2053-1583/4/1/015033',
     first: false,
   },
   {
@@ -119,6 +142,7 @@ export const publications: Publication[] = [
     authors: ['K. Wang', 'B. Huang', 'M. Tian', 'F. Ceballos', 'M.-W. Lin', 'M. Mahjouri-Samani', 'A. Boulesbaa', 'A. Puretzky', 'C. Rouleau', 'M. Yoon', 'H. Zhao', 'K. Xiao', 'G. Duscher', 'D. Geohegan'],
     venue: 'ACS Nano',
     detail: '10, 6612–6622',
+    doi: '10.1021/acsnano.6b01486',
     first: false,
   },
   {
@@ -128,6 +152,7 @@ export const publications: Publication[] = [
     authors: ['J. He', 'D. He', 'Y. Wang', 'Q. Cui', 'F. Ceballos', 'H. Zhao'],
     venue: 'Nanoscale',
     detail: '7, 9526',
+    doi: '10.1039/c5nr00188a',
     first: false,
   },
   {
@@ -137,6 +162,7 @@ export const publications: Publication[] = [
     authors: ['Q. Cui', 'F. Ceballos', 'N. Kumar', 'H. Zhao'],
     venue: 'ACS Nano',
     detail: '8, 2970',
+    doi: '10.1021/nn500277y',
     first: false,
   },
   {
@@ -146,6 +172,7 @@ export const publications: Publication[] = [
     authors: ['N. Kumar', 'Q. Cui', 'F. Ceballos', 'D. W. He', 'Y. S. Wang', 'H. Zhao'],
     venue: 'Nanoscale',
     detail: '6, 4915',
+    doi: '10.1039/c3nr06863c',
     first: false,
   },
   {
@@ -155,6 +182,17 @@ export const publications: Publication[] = [
     authors: ['N. Kumar', 'Q. Cui', 'F. Ceballos', 'D. W. He', 'Y. S. Wang', 'H. Zhao'],
     venue: 'Physical Review B',
     detail: '89, 125427',
+    doi: '10.1103/physrevb.89.125427',
+    first: false,
+  },
+  {
+    id: 'prb-2013-shg',
+    year: 2013,
+    title: 'Second Harmonic Microscopy of Monolayer MoS2',
+    authors: ['N. Kumar', 'S. Najmaei', 'Q. Cui', 'F. Ceballos', 'P. M. Ajayan', 'J. Lou', 'H. Zhao'],
+    venue: 'Physical Review B',
+    detail: '87, 161403',
+    doi: '10.1103/physrevb.87.161403',
     first: false,
   },
 ];
